@@ -48,33 +48,13 @@ def usage_trend(company_id: str, db: Session = Depends(get_db)):
     return customer_service.get_usage_trend(company_id, db)
 
 # 4. XAI (SHAP) ANALİZİ (DETAY SAYFASI BAR CHART)
-# DÜZELTME: company_id: str yapıldı
 @router.get("/{company_id}/xai", response_model=XAIResponse)
 def get_xai(company_id: str, db: Session = Depends(get_db)):
-    # Önce müşterinin olup olmadığını kontrol et
     exists = db.query(models.Customer).filter(models.Customer.company_id == company_id).first()
     if not exists:
         raise HTTPException(
             status_code=404,
             detail={"code": "COMPANY_NOT_FOUND", "detail": f"Company {company_id} was not found."},
         )
-    
-    # En son tahmini ve ona bağlı XAI faktörlerini getiriyoruz
-    last_pred = db.query(models.ChurnPrediction).filter(
-        models.ChurnPrediction.company_id == company_id
-    ).order_by(models.ChurnPrediction.calculation_date.desc()).first()
-
-    if not last_pred:
-        raise HTTPException(
-            status_code=404,
-            detail={"code": "PREDICTION_NOT_FOUND", "detail": "No churn prediction found for this customer."}
-        )
-
-    factors = db.query(models.XAIFactor).filter(
-        models.XAIFactor.prediction_id == last_pred.prediction_id
-    ).all()
-
-    return {
-        "prediction_id": last_pred.prediction_id,
-        "factors": factors
-    }
+    from app.services.xai_service import get_xai_explanation
+    return get_xai_explanation(company_id, db)

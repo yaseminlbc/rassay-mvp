@@ -83,12 +83,11 @@ def get_customer_detail(company_id: str, db: Session) -> schemas.CustomerDetail 
         id=c.id,
         company_id=c.company_id,
         company_name=company_display_name,
-        # Verileri pred servisten alıp şemaya dolduruyoruz
+        plan_type=getattr(c, 'plan_type', None),
+        account_owner=getattr(c, 'account_owner', 'Unassigned'),
         risk_score=float(pred.risk_score) if pred else 0.0,
         risk_level=pred.risk_level if pred else "Low",
         top_risk_factor=pred.top_risk_factor if pred else "None",
-        
-        # Diğer metrikler
         account_age_months=getattr(c, 'account_age_months', 0),
         mrr_value=float(getattr(c, 'mrr_value', 0.0)),
         support_tickets=getattr(c, 'support_tickets', 0),

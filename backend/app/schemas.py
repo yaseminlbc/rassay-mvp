@@ -54,14 +54,26 @@ class CustomerListItem(BaseModel):
 
 class CustomerDetail(BaseModel):
     id: int
-    company_id: str # int -> str yapıldı
+    company_id: str
+    company_name: Optional[str] = None
+    plan_type: Optional[str] = None
     account_age_months: Optional[int] = None
     mrr_value: Optional[float] = None
     support_tickets: Optional[int] = None
     login_count: Optional[int] = None
     churn_status: Optional[int] = None
     created_at: Optional[datetime] = None
-    
+    # Risk fields joined from ChurnPrediction
+    risk_score: Optional[float] = 0.0
+    risk_level: Optional[str] = "Low"
+    top_risk_factor: Optional[str] = None
+    account_owner: Optional[str] = "Unassigned"
+    renewal_days: Optional[int] = None
+    # Engagement metrics computed in customer_service
+    active_users: Optional[int] = None
+    dau_mau_ratio: Optional[float] = None
+    key_feature_adoption: Optional[int] = None
+
     class Config:
         from_attributes = True
 
@@ -98,10 +110,11 @@ class ReportItem(BaseModel):
         from_attributes = True
 
 class IntegrationStatus(BaseModel):
-    id: int
-    name: str
-    status: str
-    last_sync: Optional[datetime] = None
+    api_connection: str
+    prediction_pipeline: str
+    last_successful_sync: str
+    database: str
+    encryption: str
 
 # ==========================================
 # 5. CHURN VE XAI ŞEMALARI
@@ -138,18 +151,23 @@ class ChurnRiskResponse(BaseModel):
 # Misc ve yardımcı şemalar
 class IngestResponse(BaseModel):
     status: str
-    records_processed: int
-    message: str
+    log_id: int
+    company_id: str
 
 class PredictRunResponse(BaseModel):
-    job_id: str
     status: str
-    started_at: datetime
+    companies_processed: int
+    high_risk: int
+    medium_risk: int
+    low_risk: int
 
 class UsageDataIngest(BaseModel):
-    company_id: str # int -> str yapıldı
-    month: str
-    usage_value: float
+    company_id: str
+    login_count: Optional[int] = 0
+    active_users: Optional[int] = 0
+    feature_usage_count: Optional[int] = 0
+    support_ticket_count: Optional[int] = 0
+    nps_score: Optional[int] = None
 
 # Yedek takma isimler (Aliasing)
 class XAIFactorResponse(XAIFactor): pass

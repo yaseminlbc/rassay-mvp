@@ -97,36 +97,69 @@ def _top_risk_factor(features: dict) -> str:
 
 
 def run_prediction_for_customer(customer, db: Session) -> models.ChurnPrediction:
-    """Tek bir müşteri (Customer) için tahmin hesapla ve kaydet."""
-    # Müşterinin kullanım geçmişini çek
-    usage_logs = (
-        db.query(models.UsageData)
-        .filter(models.UsageData.company_id == customer.company_id)
-        .order_by(models.UsageData.timestamp.asc())
-        .all()
-    )
-    
-    # Feature mühendisliği ve tahmin
-    features    = _compute_features(usage_logs, getattr(customer, 'subscription', None))
-    score       = calculate_risk_score(features)
-    level       = classify_risk_level(score)
-    top_factor  = _top_risk_factor(features) if features else "Insufficient data"
+    """
+    Compute churn risk for a single customer and persist ChurnPrediction +
+    XAIFactor rows.
 
-    # Veritabanına kaydet
+    Primary path: XGBoost + SHAP via xgboost_service (requires trained model).
+    Fallback path: rule-based scoring when the model file is not yet available.
+    """
+    from app.services import xgboost_service
+
+    if xgboost_service.is_model_available():
+        feature_values = {
+            'mrr_value':          float(customer.mrr_value or 0),
+            'account_age_months': int(customer.account_age_months or 0),
+            'support_tickets':    int(customer.support_tickets or 0),
+            'login_count':        int(customer.login_count or 0),
+            'plan_type':          str(customer.plan_type or ''),
+        }
+        result       = xgboost_service.predict_single(feature_values)
+        risk_score   = result['risk_score']          # already 0-1
+        risk_level   = result['risk_level']
+        top_factor   = result['top_risk_factor']
+        shap_factors = result['shap_factors']
+        model_ver    = "v2.0-xgboost-shap"
+    else:
+        # Rule-based fallback until the model is trained for the first time
+        usage_logs = (
+            db.query(models.UsageData)
+            .filter(models.UsageData.company_id == customer.company_id)
+            .order_by(models.UsageData.timestamp.asc())
+            .all()
+        )
+        features   = _compute_features(usage_logs, getattr(customer, 'subscription', None))
+        raw_score  = calculate_risk_score(features)
+        risk_score = round(raw_score / 100.0, 4)
+        risk_level = classify_risk_level(raw_score)
+        top_factor = _top_risk_factor(features) if features else "Insufficient data"
+        shap_factors = []
+        model_ver    = "v1.1-hybrid"
+
     pred = models.ChurnPrediction(
-        company_id=customer.company_id,
+        company_id=str(customer.company_id),
         calculation_date=datetime.now(),
-        risk_score=score / 100.0, # Veritabanında 0-1 arası saklıyorsak 100'e bölüyoruz
-        risk_level=level,
+        risk_score=risk_score,
+        risk_level=risk_level,
         top_risk_factor=top_factor,
-        model_version="v1.1-hybrid",
+        model_version=model_ver,
     )
     db.add(pred)
-    db.flush()
+    db.flush()  # obtain prediction_id before inserting child XAI rows
+
+    for factor in shap_factors[:3]:
+        db.add(models.XAIFactor(
+            prediction_id=pred.prediction_id,
+            feature_name=factor['feature_name'],
+            impact_value=factor['impact_value'],
+            impact_level=factor['impact_level'],
+            direction=factor['direction'],
+        ))
+
     return pred
 
 
-def get_latest_prediction(company_id: int, db: Session):
+def get_latest_prediction(company_id: str, db: Session):
     """Müşterinin en güncel tahmin sonucunu getir."""
     return (
         db.query(models.ChurnPrediction)
@@ -136,7 +169,7 @@ def get_latest_prediction(company_id: int, db: Session):
     )
 
 
-def get_usage_history_days(company_id: int, db: Session) -> int:
+def get_usage_history_days(company_id: str, db: Session) -> int:
     """Kaç günlük kullanım geçmişi olduğunu hesapla."""
     oldest = (
         db.query(models.UsageData)

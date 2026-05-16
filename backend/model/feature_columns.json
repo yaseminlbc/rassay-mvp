@@ -1,0 +1,22 @@
+{
+  "numeric_features": [
+    "mrr_value",
+    "account_age_months",
+    "support_tickets",
+    "login_count"
+  ],
+  "plan_type_columns": [
+    "plan_Month-to-month",
+    "plan_One year",
+    "plan_Two year"
+  ],
+  "all_features": [
+    "mrr_value",
+    "account_age_months",
+    "support_tickets",
+    "login_count",
+    "plan_Month-to-month",
+    "plan_One year",
+    "plan_Two year"
+  ]
+}

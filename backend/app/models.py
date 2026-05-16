@@ -18,7 +18,7 @@ class ChurnPrediction(Base):
     __tablename__ = "churn_predictions"
     
     prediction_id = Column(Integer, primary_key=True, index=True)
-    company_id = Column(Integer, index=True) # BU SATIR SİLİNDİĞİ İÇİN HATA ALIYORDUN
+    company_id = Column(String, index=True)
     calculation_date = Column(DateTime, default=datetime.utcnow)
     risk_score = Column(Float)
     risk_level = Column(String(20), nullable=True)
@@ -39,7 +39,7 @@ class Alert(Base):
     __tablename__ = "alerts"
 
     alert_id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    company_id = Column(Integer, index=True)
+    company_id = Column(String, index=True)
     prediction_id = Column(Integer, nullable=True)
     message = Column(String)
     recommended_action = Column(String, nullable=True)
