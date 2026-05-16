@@ -147,7 +147,54 @@ export async function exportChurnRiskCsv() {
 }
 
 // ==========================================
-// 5. DATA IMPORT
+// 5. AUTH
+// ==========================================
+
+export async function loginUser(email, password) {
+  const res = await fetch(`${API_BASE_URL}/api/v1/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password }),
+  })
+  const data = await res.json().catch(() => ({}))
+  if (!res.ok) throw new Error(data.detail || `Sign-in failed (${res.status})`)
+  return data
+}
+
+export async function registerUser(email, password, full_name) {
+  const res = await fetch(`${API_BASE_URL}/api/v1/auth/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password, full_name }),
+  })
+  const data = await res.json().catch(() => ({}))
+  if (!res.ok) throw new Error(data.detail || `Registration failed (${res.status})`)
+  return data
+}
+
+export async function downloadCustomerReport(id) {
+  const res = await fetch(`${API_BASE_URL}/api/v1/customers/${id}/report`)
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}))
+    throw new Error(err.detail || `Report generation failed (${res.status})`)
+  }
+  return res.blob()
+}
+
+// ==========================================
+// 6. COMMAND CENTER
+// ==========================================
+
+export async function getCommandCenterHealthScore() {
+  return requestJson('/command-center/health-score');
+}
+
+export async function getCommandCenterNotifications() {
+  return requestJson('/command-center/notifications');
+}
+
+// ==========================================
+// 6. DATA IMPORT
 // ==========================================
 
 export async function uploadCsvFile(file) {

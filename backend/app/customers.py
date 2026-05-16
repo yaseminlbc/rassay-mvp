@@ -1,5 +1,9 @@
+from datetime import datetime, timezone
+
 from fastapi import APIRouter, Depends, Query, HTTPException
+from fastapi.responses import Response
 from sqlalchemy.orm import Session
+
 from app.database import get_db
 from app.services import customer_service
 from app.schemas import CustomerListItem, CustomerDetail, UsageTrendResponse, XAIResponse
@@ -58,3 +62,21 @@ def get_xai(company_id: str, db: Session = Depends(get_db)):
         )
     from app.services.xai_service import get_xai_explanation
     return get_xai_explanation(company_id, db)
+
+
+# 5. XAI PDF RAPORU
+@router.get("/{company_id}/report")
+def download_xai_report(company_id: str, db: Session = Depends(get_db)):
+    if not db.query(models.Customer).filter(models.Customer.company_id == company_id).first():
+        raise HTTPException(status_code=404, detail=f"Company {company_id} was not found.")
+    from app.services.pdf_service import generate_pdf
+    try:
+        pdf_bytes = generate_pdf(company_id, db)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"PDF generation failed: {exc}")
+    filename = f"rassay-xai-{company_id}-{datetime.now(timezone.utc).strftime('%Y%m%d')}.pdf"
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )

@@ -34,6 +34,7 @@ import Sidebar from '../components/Sidebar'
 import {
   getAlerts,
   getChurnRiskTrend,
+  getCommandCenterHealthScore,
   getCustomers,
   getDashboardSummary,
   getRiskDistribution,
@@ -105,6 +106,13 @@ export default function Dashboard() {
     getRiskDistribution()
       .then(res => setDistributionData(Array.isArray(res) ? res : []))
       .catch(err => console.error("Dağılım Grafiği Hatası:", err));
+
+    // 6. Overall Health Score (Command Center endpoint — composite score)
+    getCommandCenterHealthScore()
+      .then(res => {
+        setSummary(prev => prev ? { ...prev, overallHealthScore: res.overall_score } : prev);
+      })
+      .catch(err => console.error("Health Score Hatası:", err));
 
   }, [])
 
