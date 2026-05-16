@@ -83,7 +83,7 @@ export default function CompanyDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 lg:flex">
+      <div className="min-h-screen bg-slate-50 dark:bg-[#080c14] lg:flex">
         <Sidebar />
         <main className="flex-1 flex items-center justify-center">
            <div className="text-center">
@@ -97,7 +97,7 @@ export default function CompanyDetail() {
 
   if (!customer) {
     return (
-      <div className="min-h-screen bg-slate-50 lg:flex">
+      <div className="min-h-screen bg-slate-50 dark:bg-[#080c14] lg:flex">
         <Sidebar />
         <main className="flex-1">
           <Header title="Account Not Found" subtitle="The requested company ID does not exist in the database." />
@@ -148,7 +148,7 @@ export default function CompanyDetail() {
 
         <div className="space-y-6 px-5 py-6 lg:px-8 max-w-350">
           {/* ÜST BİLGİ KARTI */}
-          <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+          <section className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
             <Link className="inline-flex items-center gap-2 text-sm font-semibold text-blue-700 mb-6" to="/">
               <ArrowLeft className="h-4 w-4" /> Back to dashboard
             </Link>
@@ -173,7 +173,7 @@ export default function CompanyDetail() {
               <div>
                 <p className="text-sm font-bold text-slate-500 uppercase tracking-tight">AI Risk Probability</p>
                 <div className="mt-6 flex items-baseline gap-2">
-                  <span className="text-7xl font-black text-slate-900">{(customer.risk_score * 100).toFixed(0)}</span>
+                  <span className="text-7xl font-black text-slate-900 dark:text-white">{(customer.risk_score * 100).toFixed(0)}</span>
                   <span className="text-2xl font-bold text-slate-300">%</span>
                 </div>
                 <div className="mt-6 h-4 rounded-full bg-slate-100 overflow-hidden">
@@ -184,16 +184,16 @@ export default function CompanyDetail() {
                 </div>
               </div>
               
-              <div className="mt-8 p-4 bg-slate-50 rounded-lg border border-slate-100">
-                 <p className="text-sm font-bold text-slate-900 mb-1">AI Verdict:</p>
-                 <p className="text-sm leading-relaxed text-slate-600">
+              <div className="mt-8 p-4 bg-slate-50 dark:bg-slate-800/60 rounded-lg border border-slate-100 dark:border-slate-700">
+                 <p className="text-sm font-bold text-slate-900 dark:text-white mb-1">AI Verdict:</p>
+                 <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400">
                     {riskCopy[customer.risk_level] || 'Signals are stable.'}
                  </p>
               </div>
             </div>
 
             {/* Usage Trend Line Chart */}
-            <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-2">
                   <Activity className="h-5 w-5 text-blue-600" />
@@ -219,10 +219,10 @@ export default function CompanyDetail() {
           {/* XAI INSIGHTS - BAR CHART GÖRÜNÜMÜ */}
           <section className="grid gap-6 xl:grid-cols-[1fr_360px]">
             <XAIErrorBoundary>
-            <div className="rounded-xl border border-slate-200 bg-white p-8 shadow-sm">
+            <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-8 shadow-sm">
               <div className="flex items-center gap-2 mb-6">
                 <BrainCircuit className="h-6 w-6 text-indigo-600" />
-                <h2 className="text-lg font-bold text-slate-900">Explainable AI (XAI) Risk Factors</h2>
+                <h2 className="text-lg font-bold text-slate-900 dark:text-white">Explainable AI (XAI) Risk Factors</h2>
               </div>
 
               {xaiFactors.length > 0 ? (
@@ -274,7 +274,7 @@ export default function CompanyDetail() {
                   <ActionButton icon={PhoneCall} label="Schedule Success Call" onClick={() => setModalOpen(true)} />
                   <ActionButton icon={RefreshCw} label="Trigger Re-onboarding" onClick={() => showToast(`Re-onboarding sequence triggered for ${customer.company_name || id}`)} />
                   <ActionButton icon={reportLoading ? Loader2 : Download} label={reportLoading ? 'Generating PDF…' : 'Download XAI Report (PDF)'} onClick={handleDownloadReport} disabled={reportLoading} spinning={reportLoading} />
-                  <div className="p-4 bg-amber-50 border border-amber-100 rounded-xl mt-4">
+                  <div className="p-4 bg-amber-50 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900/50 rounded-xl mt-4">
                      <p className="text-xs font-bold text-amber-800 uppercase mb-2">CSM Tip</p>
                      <p className="text-xs text-amber-700 leading-relaxed">
                         The primary churn driver is usage decline. Focus on the last 14 days of activity during the call.
@@ -296,7 +296,7 @@ export default function CompanyDetail() {
       {/* Schedule Success Call Modal */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-2xl">
+          <div className="w-full max-w-md rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-6 shadow-2xl">
             <h3 className="text-base font-bold text-slate-900 mb-2">Schedule Success Call</h3>
             <p className="text-sm text-slate-600 mb-4">
               Book a retention call for <strong>{customer.company_name || id}</strong>
@@ -345,7 +345,7 @@ function HeaderFact({ icon: Icon, label, value }) {
 function ActionButton({ icon: Icon, label, onClick, disabled = false, spinning = false }) {
   return (
     <button
-      className="flex w-full items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-4 text-left text-sm font-bold text-slate-700 shadow-sm transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+      className="flex w-full items-center gap-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-4 text-left text-sm font-bold text-slate-700 dark:text-slate-200 shadow-sm transition hover:border-blue-300 dark:hover:border-emerald-700 hover:bg-blue-50 dark:hover:bg-emerald-500/10 hover:text-blue-700 dark:hover:text-emerald-400 disabled:cursor-not-allowed disabled:opacity-50"
       type="button"
       onClick={onClick}
       disabled={disabled}

@@ -179,7 +179,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 lg:flex">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#080c14] lg:flex">
       <Sidebar />
       <main className="min-w-0 flex-1">
         <Header
@@ -241,8 +241,8 @@ export default function Dashboard() {
 
           {/* GRAFİKLER */}
           <section className="grid gap-6 xl:grid-cols-2">
-            <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-              <h2 className="text-base font-semibold text-slate-950">Churn Risk Trend</h2>
+            <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm">
+              <h2 className="text-base font-semibold text-slate-950 dark:text-white">Churn Risk Trend</h2>
               <div className="mt-4 h-72">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={displayTrendData}>
@@ -258,8 +258,8 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-              <h2 className="text-base font-semibold text-slate-950">Risk Distribution</h2>
+            <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm">
+              <h2 className="text-base font-semibold text-slate-950 dark:text-white">Risk Distribution</h2>
               <div className="mt-4 grid h-72 gap-4 md:grid-cols-[1fr_180px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
@@ -290,11 +290,11 @@ export default function Dashboard() {
           {/* TABLO VE ALERTLER */}
           <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
             <div className="space-y-4">
-              <div className="flex flex-col gap-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm xl:flex-row xl:items-center xl:justify-between">
+              <div className="flex flex-col gap-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-sm xl:flex-row xl:items-center xl:justify-between">
                 <label className="relative block min-w-0 xl:w-72">
                   <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                   <input
-                    className="h-10 w-full rounded-md border border-slate-200 bg-slate-50 pl-9 pr-3 text-sm outline-none transition focus:border-blue-400 focus:bg-white"
+                    className="h-10 w-full rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 pl-9 pr-3 text-sm text-slate-900 dark:text-slate-100 outline-none transition focus:border-blue-400 dark:focus:border-emerald-500 focus:bg-white dark:focus:bg-slate-800"
                     onChange={(event) => setSearch(event.target.value)}
                     placeholder="Search by company name"
                     type="search"
@@ -307,8 +307,8 @@ export default function Dashboard() {
                       key={filter}
                       className={`rounded-md px-3 py-2 text-sm font-semibold capitalize transition ${
                         riskFilter === filter
-                          ? 'bg-slate-950 text-white'
-                          : 'border border-slate-200 text-slate-600 hover:bg-slate-50'
+                          ? 'bg-slate-950 dark:bg-emerald-500/20 dark:text-emerald-400 dark:border dark:border-emerald-700 text-white'
+                          : 'border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
                       }`}
                       onClick={() => setRiskFilter(filter)}
                       type="button"
@@ -329,24 +329,24 @@ export default function Dashboard() {
               <RiskTable customers={filteredCustomers} />
             </div>
 
-            <aside className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+            <aside className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm">
               <div className="flex items-center gap-2">
                 <AlertTriangle className="h-5 w-5 text-amber-600" />
-                <h2 className="text-base font-semibold text-slate-950">Priority Alerts</h2>
+                <h2 className="text-base font-semibold text-slate-950 dark:text-white">Priority Alerts</h2>
               </div>
               <div className="mt-4 space-y-3">
                 {alerts.map((alert) => (
-                  <article key={alert.alert_id || Math.random()} className="rounded-md border border-slate-200 p-4">
+                  <article key={alert.alert_id || Math.random()} className="rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/40 p-4">
                     <div className="flex items-start justify-between gap-3">
                       <div>
-                        <p className="font-semibold text-slate-950">{alert.company_name || 'Unknown'}</p>
-                        <p className="mt-1 text-sm text-slate-600">Risk Score: {alert.risk_score || 0}</p>
+                        <p className="font-semibold text-slate-950 dark:text-white">{alert.company_name || 'Unknown'}</p>
+                        <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Risk Score: {alert.risk_score || 0}</p>
                       </div>
                       <RiskBadge level={alert.severity || 'Low'} />
                     </div>
-                    <p className="mt-3 text-sm leading-6 text-slate-600">{alert.message}</p>
+                    <p className="mt-3 text-sm leading-6 text-slate-600 dark:text-slate-400">{alert.message}</p>
                     <Link
-                      className="mt-3 inline-flex text-sm font-semibold text-blue-700 hover:text-blue-900"
+                      className="mt-3 inline-flex text-sm font-semibold text-blue-700 dark:text-emerald-400 hover:text-blue-900 dark:hover:text-emerald-300"
                       to={`/customers/${alert.company_id}`}
                     >
                       Open account
@@ -354,7 +354,7 @@ export default function Dashboard() {
                   </article>
                 ))}
                 {alerts.length === 0 && (
-                  <p className="text-sm text-slate-500 italic">No priority alerts at this time.</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-500 italic">No priority alerts at this time.</p>
                 )}
               </div>
             </aside>
