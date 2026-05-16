@@ -18,6 +18,8 @@ from app.misc import (
     predictions_router,
 )
 from app.routers.data_import import router as import_router
+from app.routers.auth import router as auth_router
+from app.routers.command_center import router as command_center_router
 from app.schemas import HealthResponse
 
 # Tabloları oluştur
@@ -52,6 +54,8 @@ app.include_router(reports_router, prefix="/api/v1")
 app.include_router(ingest_router, prefix="/api/v1")
 app.include_router(predictions_router, prefix="/api/v1")
 app.include_router(import_router, prefix="/api/v1")
+app.include_router(auth_router, prefix="/api/v1")
+app.include_router(command_center_router, prefix="/api/v1")
 
 @app.get("/api/health", response_model=HealthResponse, tags=["Health"])
 def health_check():

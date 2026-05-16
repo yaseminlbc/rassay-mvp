@@ -148,6 +148,32 @@ class ChurnRiskResponse(BaseModel):
     class Config:
         from_attributes = True
 
+# ==========================================
+# 6. AUTH ŞEMALARI
+# ==========================================
+class UserCreate(BaseModel):
+    email: str
+    password: str
+    full_name: Optional[str] = None
+
+class UserLogin(BaseModel):
+    email: str
+    password: str
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class UserResponse(BaseModel):
+    id: int
+    email: str
+    full_name: Optional[str] = None
+    is_active: int
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
 # Misc ve yardımcı şemalar
 class IngestResponse(BaseModel):
     status: str
