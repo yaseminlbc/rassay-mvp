@@ -1,8 +1,9 @@
-import { BarChart3, Link2, School } from 'lucide-react'
+import { BarChart3, Link2, School, Upload } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
 
 const navItems = [
   { to: '/', label: 'Dashboard', icon: BarChart3 },
+  { to: '/import', label: 'Data Import', icon: Upload },
   { to: '/integrations', label: 'Integrations', icon: Link2 },
 ]
 

@@ -146,3 +146,21 @@ export async function exportChurnRiskCsv() {
   return response.text();
 }
 
+// ==========================================
+// 5. DATA IMPORT
+// ==========================================
+
+export async function uploadCsvFile(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+  const response = await fetch(`${API_BASE_URL}/api/v1/import/upload`, {
+    method: 'POST',
+    body: formData,
+  });
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({ detail: `Upload failed (${response.status})` }));
+    throw new Error(err.detail || `Upload failed (${response.status})`);
+  }
+  return response.json();
+}
+
