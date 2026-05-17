@@ -1,5 +1,7 @@
 # RASSAY Backend API
 
+🚀 **[Canlı Yayını Görüntüle / Live Demo](https://rassay-mvp.vercel.app)**
+
 FastAPI + SQLAlchemy + XGBoost/Mock ML + SHAP/XAI
 
 ## Hızlı Başlangıç
