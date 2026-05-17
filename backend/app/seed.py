@@ -21,6 +21,7 @@ from sqlalchemy import text
 
 from app.database import SessionLocal, engine, Base
 import app.models as models   # ensure all tables are registered
+from app.services.auth_service import hash_password
 
 EXCEL_PATH = Path(__file__).parent.parent / "rassay_final_fixed.xlsx"
 
@@ -67,6 +68,22 @@ def _load_excel() -> pd.DataFrame:
     return df
 
 
+def _seed_admin_user(db):
+    ADMIN_EMAIL = "admin@rassay.com"
+    if db.query(models.User).filter(models.User.email == ADMIN_EMAIL).first():
+        print(f"  Admin user already exists, skipping.")
+        return
+    admin = models.User(
+        email=ADMIN_EMAIL,
+        full_name="Admin User",
+        hashed_password=hash_password("adminpassword"),
+        is_active=True,
+    )
+    db.add(admin)
+    db.commit()
+    print(f"  Admin user created: {ADMIN_EMAIL}")
+
+
 def seed_db():
     Base.metadata.create_all(bind=engine)  # ensure tables exist
 
@@ -100,6 +117,8 @@ def seed_db():
         print(f"  Total customers inserted : {total:,}")
         print(f"  Churned (label=1)        : {churned:,}")
         print(f"  Retained (label=0)       : {total - churned:,}")
+
+        _seed_admin_user(db)
 
     except Exception as exc:
         print(f"\nERROR during seed: {exc}")
