@@ -10,6 +10,11 @@ import {
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true';
 
+/** Read the stored JWT on every call so it always reflects the current session. */
+function getToken() {
+  return localStorage.getItem('rassay_token')
+}
+
 /**
  * Gecikme Simülasyonu
  */
@@ -21,13 +26,21 @@ const delay = (data) =>
 /**
  * Merkezi JSON İsteği Fonksiyonu
  * Tüm isteklerin başına otomatik /api/v1 ekler ve hataları yakalar.
+ * JWT token varsa Authorization başlığı otomatik eklenir.
  */
 async function requestJson(path, options = {}) {
   // Eğer path zaten v1 içermiyorsa ekle
   const fullPath = path.startsWith('/api/v1') ? path : `/api/v1${path}`;
-  
+
+  const token = getToken()
+  const authHeaders = token ? { Authorization: `Bearer ${token}` } : {}
+  const mergedOptions = {
+    ...options,
+    headers: { ...authHeaders, ...options.headers },
+  }
+
   try {
-    const response = await fetch(`${API_BASE_URL}${fullPath}`, options);
+    const response = await fetch(`${API_BASE_URL}${fullPath}`, mergedOptions);
 
     if (!response.ok) {
       const errorBody = await response.text().catch(() => '');
@@ -173,7 +186,10 @@ export async function registerUser(email, password, full_name) {
 }
 
 export async function downloadCustomerReport(id) {
-  const res = await fetch(`${API_BASE_URL}/api/v1/customers/${id}/report`)
+  const token = getToken()
+  const res = await fetch(`${API_BASE_URL}/api/v1/reports/pdf/${id}`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  })
   if (!res.ok) {
     const err = await res.json().catch(() => ({}))
     throw new Error(err.detail || `Report generation failed (${res.status})`)

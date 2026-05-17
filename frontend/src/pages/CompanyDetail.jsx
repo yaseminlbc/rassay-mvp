@@ -138,7 +138,7 @@ export default function CompanyDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 lg:flex">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#080c14] lg:flex">
       <Sidebar />
       <main className="min-w-0 flex-1">
         <Header
@@ -169,14 +169,14 @@ export default function CompanyDetail() {
           {/* RİSK SKORU VE TREND GRAFİĞİ */}
           <section className="grid gap-6 xl:grid-cols-[380px_1fr]">
             {/* Risk Score Gauge */}
-            <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col justify-between">
+            <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm flex flex-col justify-between">
               <div>
-                <p className="text-sm font-bold text-slate-500 uppercase tracking-tight">AI Risk Probability</p>
+                <p className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-tight">AI Risk Probability</p>
                 <div className="mt-6 flex items-baseline gap-2">
                   <span className="text-7xl font-black text-slate-900 dark:text-white">{(customer.risk_score * 100).toFixed(0)}</span>
-                  <span className="text-2xl font-bold text-slate-300">%</span>
+                  <span className="text-2xl font-bold text-slate-300 dark:text-slate-600">%</span>
                 </div>
-                <div className="mt-6 h-4 rounded-full bg-slate-100 overflow-hidden">
+                <div className="mt-6 h-4 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden">
                   <div
                     className={`h-full transition-all duration-1000 ${customer.risk_score > 0.7 ? 'bg-rose-500' : 'bg-blue-500'}`}
                     style={{ width: `${customer.risk_score * 100}%` }}
@@ -273,7 +273,18 @@ export default function CompanyDetail() {
                <div className="grid gap-3">
                   <ActionButton icon={PhoneCall} label="Schedule Success Call" onClick={() => setModalOpen(true)} />
                   <ActionButton icon={RefreshCw} label="Trigger Re-onboarding" onClick={() => showToast(`Re-onboarding sequence triggered for ${customer.company_name || id}`)} />
-                  <ActionButton icon={reportLoading ? Loader2 : Download} label={reportLoading ? 'Generating PDF…' : 'Download XAI Report (PDF)'} onClick={handleDownloadReport} disabled={reportLoading} spinning={reportLoading} />
+                  {/* Export Executive PDF — primary filled button */}
+                  <button
+                    type="button"
+                    onClick={handleDownloadReport}
+                    disabled={reportLoading}
+                    className="flex w-full items-center gap-3 rounded-xl bg-blue-600 dark:bg-blue-500 px-4 py-4 text-left text-sm font-bold text-white shadow-md shadow-blue-600/20 dark:shadow-blue-500/20 transition hover:bg-blue-700 dark:hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {reportLoading
+                      ? <Loader2 className="h-4 w-4 shrink-0 animate-spin" aria-hidden="true" />
+                      : <Download className="h-4 w-4 shrink-0" aria-hidden="true" />}
+                    {reportLoading ? 'Generating PDF…' : 'Export Executive PDF'}
+                  </button>
                   <div className="p-4 bg-amber-50 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900/50 rounded-xl mt-4">
                      <p className="text-xs font-bold text-amber-800 uppercase mb-2">CSM Tip</p>
                      <p className="text-xs text-amber-700 leading-relaxed">
