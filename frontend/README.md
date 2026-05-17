@@ -1,5 +1,7 @@
 # RASSAY Frontend
 
+🚀 **[Canlı Yayını Görüntüle / Live Demo](https://rassay-mvp.vercel.app)**
+
 RASSAY is a B2B SaaS churn early-warning dashboard for Customer Success teams. The frontend currently runs with synthetic mock data and is prepared for a future FastAPI backend.
 
 ## Technology Stack
