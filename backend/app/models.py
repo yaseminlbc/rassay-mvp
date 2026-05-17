@@ -27,7 +27,7 @@ class Customer(Base):
 
 class ChurnPrediction(Base):
     __tablename__ = "churn_predictions"
-    
+
     prediction_id = Column(Integer, primary_key=True, index=True)
     company_id = Column(String, index=True)
     calculation_date = Column(DateTime, default=datetime.utcnow)
@@ -35,6 +35,7 @@ class ChurnPrediction(Base):
     risk_level = Column(String(20), nullable=True)
     top_risk_factor = Column(String(255), nullable=True)
     model_version = Column(String(50), nullable=True)
+    actual_outcome = Column(Integer, nullable=True)  # 1=churned, 0=retained
 
 class XAIFactor(Base):
     __tablename__ = "xai_factors"
