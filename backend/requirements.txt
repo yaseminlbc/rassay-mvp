@@ -31,3 +31,6 @@ reportlab==4.5.1
 # Testing
 pytest
 httpx
+
+passlib
+bcrypt
