@@ -20,7 +20,7 @@ def get_customer_list(
     search: str | None = None,
 ) -> list[schemas.CustomerListItem]:
     """Dashboard ana tablosu için müşteri listesini döner."""
-    customers = db.query(models.Customer).all()
+    customers = db.query(models.Customer).limit(100).all()
     result = []
 
     for c in customers:

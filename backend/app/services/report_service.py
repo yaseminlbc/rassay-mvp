@@ -9,7 +9,7 @@ from app.services.customer_service import _time_ago
 
 def generate_churn_risk_csv(db: Session) -> str:
     # DÜZELTME: models.Company -> models.Customer
-    customers = db.query(models.Customer).all()
+    customers = db.query(models.Customer).limit(100).all()
 
     output = io.StringIO()
     writer = csv.DictWriter(output, fieldnames=[

@@ -91,7 +91,7 @@ predictions_router = APIRouter(prefix="/predict", tags=["Predictions"])
 @predictions_router.post("/run", response_model=PredictRunResponse)
 def run_predictions(db: Session = Depends(get_db)):
     # DÜZELTME: models.Company -> models.Customer
-    customers = db.query(models.Customer).all()
+    customers = db.query(models.Customer).limit(100).all()
     counts = {"High": 0, "Medium": 0, "Low": 0}
     
     for customer in customers:
